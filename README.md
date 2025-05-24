@@ -125,7 +125,7 @@ Une application web moderne et intuitive pour créer des sites web avec un édit
 
 ```bash
 # Cloner le projet
-git clone [url-du-repo]
+git clone https://github.com/Maleksouiden/NCLC-VIT
 cd template-builder
 
 # Installer les dépendances
