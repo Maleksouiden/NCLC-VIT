@@ -1,7 +1,7 @@
 {
   "name": "template-builder",
-  "version": "1.0.0",
-  "description": "Application web moderne pour créer des sites web avec un éditeur visuel drag & drop",
+  "version": "2.0.0",
+  "description": "Application web moderne pour créer des sites web avec un éditeur visuel drag & drop - Version avancée avec cartes multiples, formulaires dynamiques, maps et palettes de couleurs",
   "type": "module",
   "author": "Malek Souiden",
   "license": "MIT",

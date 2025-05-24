@@ -10,7 +10,8 @@ const TextBlock = ({ props, isSelected, onClick }) => {
     padding = '20px',
     fontWeight = 'normal',
     fontStyle = 'normal',
-    textDecoration = 'none'
+    textDecoration = 'none',
+    fontFamily = 'Roboto, Arial, sans-serif'
   } = props
 
   return (
@@ -35,6 +36,7 @@ const TextBlock = ({ props, isSelected, onClick }) => {
           fontWeight,
           fontStyle,
           textDecoration,
+          fontFamily,
           lineHeight: 1.6
         }}
       >

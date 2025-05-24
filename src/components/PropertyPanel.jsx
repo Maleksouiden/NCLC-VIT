@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   Box,
   Typography,
@@ -13,11 +13,26 @@ import {
   Divider,
   Slider,
   Button,
-  IconButton
+  IconButton,
+  Grid,
+  Chip,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails
 } from '@mui/material'
-import { Delete, ColorLens } from '@mui/icons-material'
+import {
+  Delete,
+  ColorLens,
+  Add,
+  ExpandMore,
+  Palette,
+  FontDownload
+} from '@mui/icons-material'
+import { colorPalettes, fontFamilies } from '../utils/colorPalettes'
 
 const PropertyPanel = ({ selectedBlock, onUpdateBlock, onDeleteBlock }) => {
+  const [showColorPalettes, setShowColorPalettes] = useState(false)
+
   if (!selectedBlock) {
     return (
       <Paper
@@ -49,6 +64,74 @@ const PropertyPanel = ({ selectedBlock, onUpdateBlock, onDeleteBlock }) => {
     }
     onUpdateBlock(updatedBlock)
   }
+
+  const renderColorPalettes = () => (
+    <Accordion>
+      <AccordionSummary expandIcon={<ExpandMore />}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Palette />
+          <Typography>Palettes de couleurs</Typography>
+        </Box>
+      </AccordionSummary>
+      <AccordionDetails>
+        <Grid container spacing={2}>
+          {colorPalettes.map((palette, index) => (
+            <Grid item xs={12} key={index}>
+              <Typography variant="body2" gutterBottom>
+                {palette.name}
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 0.5, mb: 1 }}>
+                {palette.colors.map((color, colorIndex) => (
+                  <Box
+                    key={colorIndex}
+                    sx={{
+                      width: 24,
+                      height: 24,
+                      backgroundColor: color,
+                      borderRadius: 1,
+                      cursor: 'pointer',
+                      border: '1px solid #ddd',
+                      '&:hover': {
+                        transform: 'scale(1.1)'
+                      }
+                    }}
+                    onClick={() => handlePropertyChange('color', color)}
+                    title={color}
+                  />
+                ))}
+              </Box>
+            </Grid>
+          ))}
+        </Grid>
+      </AccordionDetails>
+    </Accordion>
+  )
+
+  const renderFontSelector = () => (
+    <Accordion>
+      <AccordionSummary expandIcon={<ExpandMore />}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <FontDownload />
+          <Typography>Polices</Typography>
+        </Box>
+      </AccordionSummary>
+      <AccordionDetails>
+        <FormControl fullWidth>
+          <InputLabel>Police</InputLabel>
+          <Select
+            value={selectedBlock.props.fontFamily || 'Roboto, Arial, sans-serif'}
+            onChange={(e) => handlePropertyChange('fontFamily', e.target.value)}
+          >
+            {fontFamilies.map((font, index) => (
+              <MenuItem key={index} value={font.value} sx={{ fontFamily: font.value }}>
+                {font.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </AccordionDetails>
+    </Accordion>
+  )
 
   const renderCommonProperties = () => (
     <>
@@ -105,6 +188,8 @@ const PropertyPanel = ({ selectedBlock, onUpdateBlock, onDeleteBlock }) => {
         onChange={(e) => handlePropertyChange('color', e.target.value)}
         sx={{ mb: 2 }}
       />
+      {renderColorPalettes()}
+      {renderFontSelector()}
     </>
   )
 
@@ -371,8 +456,145 @@ const PropertyPanel = ({ selectedBlock, onUpdateBlock, onDeleteBlock }) => {
     </>
   )
 
+  const renderCardProperties = () => (
+    <>
+      {renderCommonProperties()}
+      <FormControl fullWidth sx={{ mb: 2 }}>
+        <InputLabel>Cartes par ligne</InputLabel>
+        <Select
+          value={selectedBlock.props.cardsPerRow || 3}
+          onChange={(e) => handlePropertyChange('cardsPerRow', e.target.value)}
+        >
+          <MenuItem value={1}>1 carte</MenuItem>
+          <MenuItem value={2}>2 cartes</MenuItem>
+          <MenuItem value={3}>3 cartes</MenuItem>
+          <MenuItem value={4}>4 cartes</MenuItem>
+          <MenuItem value={6}>6 cartes</MenuItem>
+        </Select>
+      </FormControl>
+
+      <Typography variant="h6" gutterBottom sx={{ mt: 3, mb: 2 }}>
+        Cartes ({(selectedBlock.props.cards || []).length})
+      </Typography>
+
+      {(selectedBlock.props.cards || []).map((card, index) => (
+        <Accordion key={index} sx={{ mb: 2 }}>
+          <AccordionSummary expandIcon={<ExpandMore />}>
+            <Typography>Carte {index + 1}: {card.title || 'Sans titre'}</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <TextField
+              fullWidth
+              label="Titre"
+              value={card.title || ''}
+              onChange={(e) => {
+                const newCards = [...(selectedBlock.props.cards || [])]
+                newCards[index] = { ...newCards[index], title: e.target.value }
+                handlePropertyChange('cards', newCards)
+              }}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              fullWidth
+              label="Contenu"
+              multiline
+              rows={3}
+              value={card.content || ''}
+              onChange={(e) => {
+                const newCards = [...(selectedBlock.props.cards || [])]
+                newCards[index] = { ...newCards[index], content: e.target.value }
+                handlePropertyChange('cards', newCards)
+              }}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              fullWidth
+              label="URL de l'image"
+              value={card.image || ''}
+              onChange={(e) => {
+                const newCards = [...(selectedBlock.props.cards || [])]
+                newCards[index] = { ...newCards[index], image: e.target.value }
+                handlePropertyChange('cards', newCards)
+              }}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              fullWidth
+              label="Texte du bouton"
+              value={card.buttonText || ''}
+              onChange={(e) => {
+                const newCards = [...(selectedBlock.props.cards || [])]
+                newCards[index] = { ...newCards[index], buttonText: e.target.value }
+                handlePropertyChange('cards', newCards)
+              }}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              fullWidth
+              label="URL du bouton"
+              value={card.buttonUrl || ''}
+              onChange={(e) => {
+                const newCards = [...(selectedBlock.props.cards || [])]
+                newCards[index] = { ...newCards[index], buttonUrl: e.target.value }
+                handlePropertyChange('cards', newCards)
+              }}
+              sx={{ mb: 2 }}
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={card.showButton !== false}
+                  onChange={(e) => {
+                    const newCards = [...(selectedBlock.props.cards || [])]
+                    newCards[index] = { ...newCards[index], showButton: e.target.checked }
+                    handlePropertyChange('cards', newCards)
+                  }}
+                />
+              }
+              label="Afficher le bouton"
+              sx={{ mb: 2 }}
+            />
+            <Button
+              color="error"
+              onClick={() => {
+                const newCards = [...(selectedBlock.props.cards || [])]
+                newCards.splice(index, 1)
+                handlePropertyChange('cards', newCards)
+              }}
+              size="small"
+              fullWidth
+            >
+              Supprimer cette carte
+            </Button>
+          </AccordionDetails>
+        </Accordion>
+      ))}
+
+      <Button
+        variant="outlined"
+        startIcon={<Add />}
+        onClick={() => {
+          const newCards = [...(selectedBlock.props.cards || []), {
+            title: 'Nouvelle carte',
+            content: 'Contenu de la nouvelle carte',
+            image: 'https://via.placeholder.com/300x200?text=Image',
+            buttonText: 'En savoir plus',
+            buttonUrl: '#',
+            showButton: true
+          }]
+          handlePropertyChange('cards', newCards)
+        }}
+        fullWidth
+        sx={{ mt: 2 }}
+      >
+        Ajouter une carte
+      </Button>
+    </>
+  )
+
   const renderFormProperties = () => (
     <>
+      {renderCommonProperties()}
       <TextField
         fullWidth
         label="Titre du formulaire"
@@ -380,6 +602,111 @@ const PropertyPanel = ({ selectedBlock, onUpdateBlock, onDeleteBlock }) => {
         onChange={(e) => handlePropertyChange('title', e.target.value)}
         sx={{ mb: 2 }}
       />
+
+      <Typography variant="h6" gutterBottom sx={{ mt: 3, mb: 2 }}>
+        Champs du formulaire ({(selectedBlock.props.fields || []).length})
+      </Typography>
+
+      {(selectedBlock.props.fields || []).map((field, index) => (
+        <Accordion key={field.id || index} sx={{ mb: 2 }}>
+          <AccordionSummary expandIcon={<ExpandMore />}>
+            <Typography>Champ {index + 1}: {field.label || 'Sans label'}</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <FormControl fullWidth sx={{ mb: 2 }}>
+              <InputLabel>Type de champ</InputLabel>
+              <Select
+                value={field.type || 'text'}
+                onChange={(e) => {
+                  const newFields = [...(selectedBlock.props.fields || [])]
+                  newFields[index] = { ...newFields[index], type: e.target.value }
+                  handlePropertyChange('fields', newFields)
+                }}
+              >
+                <MenuItem value="text">Texte</MenuItem>
+                <MenuItem value="email">Email</MenuItem>
+                <MenuItem value="tel">Téléphone</MenuItem>
+                <MenuItem value="number">Nombre</MenuItem>
+                <MenuItem value="date">Date</MenuItem>
+                <MenuItem value="textarea">Zone de texte</MenuItem>
+                <MenuItem value="select">Liste déroulante</MenuItem>
+                <MenuItem value="checkbox">Case à cocher</MenuItem>
+                <MenuItem value="radio">Bouton radio</MenuItem>
+              </Select>
+            </FormControl>
+            <TextField
+              fullWidth
+              label="Label"
+              value={field.label || ''}
+              onChange={(e) => {
+                const newFields = [...(selectedBlock.props.fields || [])]
+                newFields[index] = { ...newFields[index], label: e.target.value }
+                handlePropertyChange('fields', newFields)
+              }}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              fullWidth
+              label="Placeholder"
+              value={field.placeholder || ''}
+              onChange={(e) => {
+                const newFields = [...(selectedBlock.props.fields || [])]
+                newFields[index] = { ...newFields[index], placeholder: e.target.value }
+                handlePropertyChange('fields', newFields)
+              }}
+              sx={{ mb: 2 }}
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={field.required !== false}
+                  onChange={(e) => {
+                    const newFields = [...(selectedBlock.props.fields || [])]
+                    newFields[index] = { ...newFields[index], required: e.target.checked }
+                    handlePropertyChange('fields', newFields)
+                  }}
+                />
+              }
+              label="Champ obligatoire"
+              sx={{ mb: 2 }}
+            />
+            <Button
+              color="error"
+              onClick={() => {
+                const newFields = [...(selectedBlock.props.fields || [])]
+                newFields.splice(index, 1)
+                handlePropertyChange('fields', newFields)
+              }}
+              size="small"
+              fullWidth
+            >
+              Supprimer ce champ
+            </Button>
+          </AccordionDetails>
+        </Accordion>
+      ))}
+
+      <Button
+        variant="outlined"
+        startIcon={<Add />}
+        onClick={() => {
+          const newFields = [...(selectedBlock.props.fields || []), {
+            id: Date.now(),
+            type: 'text',
+            label: 'Nouveau champ',
+            placeholder: 'Entrez votre texte...',
+            required: false
+          }]
+          handlePropertyChange('fields', newFields)
+        }}
+        fullWidth
+        sx={{ mt: 2, mb: 3 }}
+      >
+        Ajouter un champ
+      </Button>
+
+      <Divider sx={{ my: 2 }} />
+
       <TextField
         fullWidth
         label="Texte du bouton"
@@ -410,6 +737,57 @@ const PropertyPanel = ({ selectedBlock, onUpdateBlock, onDeleteBlock }) => {
     </>
   )
 
+  const renderMapProperties = () => (
+    <>
+      {renderCommonProperties()}
+      <TextField
+        fullWidth
+        label="Titre (optionnel)"
+        value={selectedBlock.props.title || ''}
+        onChange={(e) => handlePropertyChange('title', e.target.value)}
+        sx={{ mb: 2 }}
+      />
+      <FormControlLabel
+        control={
+          <Switch
+            checked={selectedBlock.props.showTitle !== false}
+            onChange={(e) => handlePropertyChange('showTitle', e.target.checked)}
+          />
+        }
+        label="Afficher le titre"
+        sx={{ mb: 2 }}
+      />
+      <TextField
+        fullWidth
+        label="Adresse"
+        value={selectedBlock.props.address || ''}
+        onChange={(e) => handlePropertyChange('address', e.target.value)}
+        sx={{ mb: 2 }}
+        helperText="Ex: 123 Rue de la Paix, Paris, France"
+      />
+      <Box sx={{ mb: 2 }}>
+        <Typography gutterBottom>Zoom: {selectedBlock.props.zoom || 15}</Typography>
+        <Slider
+          value={selectedBlock.props.zoom || 15}
+          onChange={(e, value) => handlePropertyChange('zoom', value)}
+          min={1}
+          max={20}
+          step={1}
+        />
+      </Box>
+      <Box sx={{ mb: 2 }}>
+        <Typography gutterBottom>Hauteur: {selectedBlock.props.height || '400px'}</Typography>
+        <Slider
+          value={parseInt(selectedBlock.props.height) || 400}
+          onChange={(e, value) => handlePropertyChange('height', `${value}px`)}
+          min={200}
+          max={800}
+          step={50}
+        />
+      </Box>
+    </>
+  )
+
   const renderProperties = () => {
     switch (selectedBlock.type) {
       case 'text':
@@ -422,10 +800,14 @@ const PropertyPanel = ({ selectedBlock, onUpdateBlock, onDeleteBlock }) => {
         return renderNavbarProperties()
       case 'hero':
         return renderHeroProperties()
+      case 'card':
+        return renderCardProperties()
       case 'video':
         return renderVideoProperties()
       case 'form':
         return renderFormProperties()
+      case 'map':
+        return renderMapProperties()
       default:
         return (
           <Typography color="text.secondary">

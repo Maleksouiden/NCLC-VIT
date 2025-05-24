@@ -5,9 +5,10 @@ const FormBlock = ({ props, isSelected, onClick }) => {
   const {
     title = 'Contactez-nous',
     fields = [
-      { type: 'text', label: 'Nom', required: true },
-      { type: 'email', label: 'Email', required: true },
-      { type: 'textarea', label: 'Message', required: true }
+      { id: 1, type: 'text', label: 'Nom', placeholder: 'Votre nom', required: true },
+      { id: 2, type: 'email', label: 'Email', placeholder: 'votre@email.com', required: true },
+      { id: 3, type: 'tel', label: 'Téléphone', placeholder: '+33 1 23 45 67 89', required: false },
+      { id: 4, type: 'textarea', label: 'Message', placeholder: 'Votre message...', required: true }
     ],
     buttonText = 'Envoyer',
     buttonColor = 'primary',
@@ -51,7 +52,7 @@ const FormBlock = ({ props, isSelected, onClick }) => {
             {title}
           </Typography>
         )}
-        
+
         <Box
           component="form"
           onSubmit={handleSubmit}
@@ -60,10 +61,11 @@ const FormBlock = ({ props, isSelected, onClick }) => {
         >
           {fields.map((field, index) => (
             <TextField
-              key={index}
+              key={field.id || index}
               fullWidth
               type={field.type === 'textarea' ? 'text' : field.type}
               label={field.label}
+              placeholder={field.placeholder}
               required={field.required}
               multiline={field.type === 'textarea'}
               rows={field.type === 'textarea' ? 4 : 1}
@@ -71,7 +73,7 @@ const FormBlock = ({ props, isSelected, onClick }) => {
               variant="outlined"
             />
           ))}
-          
+
           <Button
             type="submit"
             variant="contained"

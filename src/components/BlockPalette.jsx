@@ -18,7 +18,8 @@ import {
   CreditCard,
   Web,
   VideoLibrary,
-  ContactMail
+  ContactMail,
+  Map
 } from '@mui/icons-material'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -100,16 +101,39 @@ const BlockPalette = ({ onAddBlock }) => {
     },
     {
       type: 'card',
-      name: 'Carte',
+      name: 'Cartes',
       icon: <CreditCard />,
-      description: 'Carte avec image et contenu',
+      description: 'Grille de cartes personnalisables',
       defaultProps: {
-        title: 'Titre de la carte',
-        content: 'Contenu de la carte avec description.',
-        image: 'https://via.placeholder.com/300x200?text=Image',
-        buttonText: 'En savoir plus',
-        showButton: true,
-        layout: 'vertical'
+        cards: [
+          {
+            title: 'Première carte',
+            content: 'Contenu de la première carte avec description détaillée.',
+            image: 'https://via.placeholder.com/300x200?text=Image+1',
+            buttonText: 'En savoir plus',
+            buttonUrl: '#',
+            showButton: true
+          },
+          {
+            title: 'Deuxième carte',
+            content: 'Contenu de la deuxième carte avec description détaillée.',
+            image: 'https://via.placeholder.com/300x200?text=Image+2',
+            buttonText: 'Découvrir',
+            buttonUrl: '#',
+            showButton: true
+          },
+          {
+            title: 'Troisième carte',
+            content: 'Contenu de la troisième carte avec description détaillée.',
+            image: 'https://via.placeholder.com/300x200?text=Image+3',
+            buttonText: 'Voir plus',
+            buttonUrl: '#',
+            showButton: true
+          }
+        ],
+        cardsPerRow: 3,
+        layout: 'vertical',
+        spacing: 3
       }
     },
     {
@@ -148,13 +172,30 @@ const BlockPalette = ({ onAddBlock }) => {
       defaultProps: {
         title: 'Contactez-nous',
         fields: [
-          { type: 'text', label: 'Nom', required: true },
-          { type: 'email', label: 'Email', required: true },
-          { type: 'textarea', label: 'Message', required: true }
+          { id: 1, type: 'text', label: 'Nom', placeholder: 'Votre nom', required: true },
+          { id: 2, type: 'email', label: 'Email', placeholder: 'votre@email.com', required: true },
+          { id: 3, type: 'tel', label: 'Téléphone', placeholder: '+33 1 23 45 67 89', required: false },
+          { id: 4, type: 'textarea', label: 'Message', placeholder: 'Votre message...', required: true }
         ],
         buttonText: 'Envoyer',
         buttonColor: 'primary',
         padding: '40px 20px'
+      }
+    },
+    {
+      type: 'map',
+      name: 'Carte',
+      icon: <Map />,
+      description: 'Carte Google Maps intégrée',
+      defaultProps: {
+        title: 'Notre localisation',
+        address: 'Paris, France',
+        zoom: 15,
+        width: '100%',
+        height: '400px',
+        padding: '20px',
+        borderRadius: 8,
+        showTitle: true
       }
     }
   ]

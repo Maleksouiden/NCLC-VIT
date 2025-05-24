@@ -31,6 +31,7 @@ const Editor = ({ template, onBackClick, isDarkMode, toggleTheme }) => {
   const {
     state: blocks,
     setState: setBlocks,
+    setCurrentState: setCurrentBlocks,
     undo,
     redo,
     canUndo,
@@ -74,11 +75,19 @@ const Editor = ({ template, onBackClick, isDarkMode, toggleTheme }) => {
     setSelectedBlockId(newBlock.id)
   }
 
-  const handleUpdateBlock = (updatedBlock) => {
+  const handleUpdateBlock = (updatedBlock, immediate = false) => {
     const newBlocks = blocks.map(block =>
       block.id === updatedBlock.id ? updatedBlock : block
     )
-    setBlocks(newBlocks) // Debounced pour modifications de propriétés
+
+    if (immediate) {
+      setBlocks(newBlocks, true) // Immédiat pour certaines modifications
+    } else {
+      // Mise à jour immédiate de l'affichage sans enregistrer dans l'historique
+      setCurrentBlocks(newBlocks)
+      // Enregistrement différé dans l'historique
+      setBlocks(newBlocks) // Debounced pour modifications de propriétés
+    }
   }
 
   const handleDeleteBlock = (blockId) => {

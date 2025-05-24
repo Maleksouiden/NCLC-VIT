@@ -8,6 +8,7 @@ import CardBlock from './blocks/CardBlock'
 import FooterBlock from './blocks/FooterBlock'
 import VideoBlock from './blocks/VideoBlock'
 import FormBlock from './blocks/FormBlock'
+import MapBlock from './blocks/MapBlock'
 
 const BlockRenderer = ({ block, isSelected, onClick }) => {
   const blockComponents = {
@@ -19,7 +20,8 @@ const BlockRenderer = ({ block, isSelected, onClick }) => {
     card: CardBlock,
     footer: FooterBlock,
     video: VideoBlock,
-    form: FormBlock
+    form: FormBlock,
+    map: MapBlock
   }
 
   const BlockComponent = blockComponents[block.type]

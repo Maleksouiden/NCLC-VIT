@@ -32,7 +32,7 @@ export const useUndoRedo = (initialState) => {
             return newHistory;
           });
           setCurrentIndex((prev) => Math.min(prev + 1, 49));
-        }, 500); // Attendre 500ms avant d'enregistrer
+        }, 1500); // Attendre 1.5s avant d'enregistrer pour les modifications de texte
         return;
       }
 
@@ -68,9 +68,22 @@ export const useUndoRedo = (initialState) => {
     setCurrentIndex(0);
   }, []);
 
+  // Fonction pour mettre à jour l'état actuel sans enregistrer dans l'historique
+  const setCurrentState = useCallback(
+    (newState) => {
+      setHistory((prev) => {
+        const newHistory = [...prev];
+        newHistory[currentIndex] = newState;
+        return newHistory;
+      });
+    },
+    [currentIndex]
+  );
+
   return {
     state: currentState,
     setState,
+    setCurrentState,
     undo,
     redo,
     canUndo,
